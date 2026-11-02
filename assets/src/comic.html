@@ -1,0 +1,23 @@
+<!doctype html><meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Bangers&family=Patrick+Hand&family=JetBrains+Mono:wght@400;700;800&display=block" rel="stylesheet"><script src="art.js"></script>
+<style>:root{--paper:#fbf6ea}html,body{margin:0}body{width:1760px;height:700px;background:#fbf6ea;color:#111}</style>
+<body><svg id=s width="1760" height="700" viewBox="0 0 1760 700"></svg>
+<script>
+const W=410,H=560,Y=110,X=[30,460,890,1320];
+const panel=(i,body)=>`<clipPath id="c${i}"><rect x="${X[i]}" y="${Y}" width="${W}" height="${H}"/></clipPath><g clip-path="url(#c${i})"><rect x="${X[i]}" y="${Y}" width="${W}" height="${H}" fill="${i%2?'#f3e9d3':'#fbf6ea'}"/>${body}</g><rect x="${X[i]}" y="${Y}" width="${W}" height="${H}" fill="none" stroke="#111" stroke-width="9"/>`;
+const at=(x,y,sc,svg)=>`<g transform="translate(${x} ${y}) scale(${sc})">${svg}</g>`;
+let s='<defs>'+INK_FILTER+'</defs>';
+s+=`<text x="30" y="72" font-family="Bangers" font-size="58" letter-spacing="2" fill="#111">THE 11:58 PM DEPLOY</text><text x="1730" y="72" text-anchor="end" font-family="'Patrick Hand'" font-size="30" fill="#555">a ship-loop story in four panels</text>`;
+// 1: the founder wants to ship
+s+=panel(0, caption(X[0]+14,Y+14,'11:58 PM',150)+at(X[0]-10,Y+190,0.56,founder({mouth:'grin'}))+laptop(['ENG-12 ✓','works on','my machine'],X[0]+250,Y+330,140)+bubble(X[0]+120,Y+66,270,108,X[0]+250,Y+250,['Tests? Later.','SHIP IT.'],30));
+// 2: the loop asks for a demo
+s+=panel(1, caption(X[1]+14,Y+14,'STEP 5',112)+at(X[1]+10,Y+270,0.82,box({prop:'clipboard'}))+at(X[1]+200,Y+250,0.4,founder({mouth:'oh',sweat:true,mug:false,eyes:'side'}))+bubble(X[1]+16,Y+70,378,140,X[1]+150,Y+300,['Demo first.','Phone, tablet, desktop.','Light AND dark.'],27));
+// 3: the empty-diff pass
+s+=panel(2, caption(X[2]+14,Y+14,'STEP 6: SECURITY',222)+at(X[2]+6,Y+300,0.7,box({prop:'magnifier'}))+
+  `<g filter="url(#ink)"><rect x="${X[2]+214}" y="${Y+320}" width="180" height="170" fill="#fff" stroke="#111" stroke-width="6" transform="rotate(5 ${X[2]+304} ${Y+405})"/></g>
+   <g transform="rotate(5 ${X[2]+304} ${Y+405})" font-family="'JetBrains Mono'" font-size="14" font-weight="700" fill="#111"><text x="${X[2]+228}" y="${Y+352}">security-review</text><text x="${X[2]+228}" y="${Y+376}">no findings ✓</text><text x="${X[2]+228}" y="${Y+412}" fill="#c0392b">files in scope:</text><text x="${X[2]+228}" y="${Y+466}" fill="#c0392b" font-size="52" font-family="Bangers">0</text></g>`+bubble(X[2]+16,Y+70,378,140,X[2]+250,Y+322,['"No findings"','in an empty diff.','That is not a pass.'],27));
+// 4: next morning
+s+=panel(3, caption(X[3]+14,Y+14,'8:02 AM',122)+at(X[3]-70,Y+200,0.56,founder({mouth:'sleep',eyes:'closed',mug:false}))+laptop(['PR #42 open','demo ✓ cso ✓','Not checked:','  nothing'],X[3]+214,Y+300,180)+
+  `<text x="${X[3]+40}" y="${Y+200}" font-family="Bangers" font-size="44" fill="#111" transform="rotate(-12 ${X[3]+40} ${Y+200})">z z Z</text>`+
+  at(X[3]+250,Y+90,0.5,box({mouth:'smile'}))+bubble(X[3]+200,Y+64,130,70,X[3]+300,Y+130,['Shipped.'],27));
+document.getElementById('s').innerHTML=s;
+</script>

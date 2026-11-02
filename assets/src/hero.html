@@ -1,0 +1,36 @@
+<!doctype html><meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Bangers&family=Patrick+Hand&family=JetBrains+Mono:wght@400;700;800&display=block" rel="stylesheet"><script src="art.js"></script>
+<style>
+:root{--paper:#0e0d0c}
+html,body{margin:0}
+body{width:1760px;height:990px;background:#0e0d0c;color:#efe6d6;font-family:'JetBrains Mono',monospace;position:relative;overflow:hidden}
+.path{position:absolute;left:44px;top:34px;font-size:18px;color:#8a8478}
+.bg{position:absolute;left:44px;top:80px;width:820px;font-size:14px;line-height:19px;color:#2a2724;white-space:pre-wrap;word-break:break-all}
+.bg s{color:#3a2f2a}
+#art{position:absolute;left:150px;top:150px}
+.r{position:absolute;left:950px;top:160px;width:760px}
+.tag{font-size:22px;letter-spacing:4px;color:#b9b0a0;font-weight:700}.tag i{display:inline-block;width:14px;height:14px;border-radius:50%;background:#f2c94c;margin-right:16px;box-shadow:0 0 18px #f2c94c}
+h1{font-family:Bangers;font-weight:400;font-size:168px;margin:26px 0 0;letter-spacing:3px;line-height:1}
+h1 b{font-weight:400;color:#f2c94c;text-shadow:0 0 40px rgba(242,201,76,.45)}
+.sub{font-size:31px;margin-top:22px;line-height:1.35}
+.row{display:flex;gap:56px;margin-top:58px}.row div{font-size:56px;font-weight:800}.row span{display:block;font-size:19px;font-weight:400;color:#a49b8b;margin-top:6px}
+.yet{margin-top:62px;font-size:27px;color:#cfc6b6}.yet em{color:#8a8478}
+.foot{position:absolute;left:950px;bottom:56px;font-size:19px;color:#8a8478}
+</style>
+<body>
+<div class=path>~/ship-loop</div>
+<div class=bg id=bg></div>
+<svg id=art width="682" height="792" viewBox="0 0 620 720"></svg>
+<div class=r>
+ <div class=tag><i></i>NOW SHIPPING</div>
+ <h1>ship<b>-</b>loop</h1>
+ <div class=sub>One Linear ticket in.<br>One reviewed, demoed, security-checked change out.</div>
+ <div class=row><div>7<span>steps</span></div><div>3<span>human gates</span></div><div>0<span>empty-diff passes</span></div><div>1<span>"Not checked" line</span></div></div>
+ <div class=yet><em>It still ships at 2am.</em> It just stops lying about it.</div>
+</div>
+<div class=foot>Claude Code skills for iOS and web. Linear · gstack · ponytail.</div>
+<script>
+document.getElementById('art').innerHTML='<defs>'+INK_FILTER+'</defs>'+founder();
+const log=["$ git push --force origin main","# TODO: tests later","it works on my machine","LGTM (didn't read)","security-review: no findings (0 files in scope)","git stash pop  # whose stash is this","ssh prod 'npm run migrate'","demo: one screenshot of the login page","develop is 412 commits behind main","assignee: me  # (it was not me)","6 simulators booted, load avg 642"];
+let t='';for(let i=0;i<46;i++){const l=log[i%log.length];t+=(i%3==1?'<s>'+l+'</s>':l)+'  ';}
+document.getElementById('bg').innerHTML=t.repeat(2);
+</script>

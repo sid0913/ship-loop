@@ -1,0 +1,9 @@
+{
+  "base_branch": "main",
+  "land_mode": "pr",
+  "checks": ["npm run typecheck", "npm test", "npm run build"],
+  "web": {
+    "dev_command": "npm run dev",
+    "port": 3000
+  }
+}

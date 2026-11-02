@@ -1,0 +1,11 @@
+{
+  "base_branch": "main",
+  "land_mode": "merge",
+  "checks": ["npx tsc --noEmit", "npx vitest run"],
+  "ios": {
+    "workspace": "ios/MyApp.xcworkspace",
+    "scheme": "MyApp",
+    "bundle_id": "com.example.myapp",
+    "devices": ["iPhone 17 Pro"]
+  }
+}
