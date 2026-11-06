@@ -1,6 +1,6 @@
 ---
 name: ship-loop-web
-description: Take one or more Linear tickets from "ready" to landed for a web app: worktree, responsive design demo, plan reviews, ponytail implementation, tests, browser demo video, security gate, PR or merge, cleanup. Multiple IDs fan out to one subagent per ticket. Invoke explicitly with /ship-loop-web <LINEAR-ID> [<LINEAR-ID>...] [--fast].
+description: Take one or more Linear tickets from "ready" to landed for a web app: worktree, responsive design demo, plan reviews, ponytail implementation, tests, browser demo video, security gate, PR or merge, cleanup. Multiple IDs fan out to one subagent per ticket. Invoke explicitly with /ship-loop-web <LINEAR-ID> [<LINEAR-ID>...] [--fast] [--merge-develop] [--in-review].
 ---
 
 # /ship-loop-web: Linear ticket to landed, end to end (web)
@@ -12,6 +12,8 @@ worktrees, pushes branches and deletes worktrees.
 - One ID: start at **Before you start**, then Steps 1-7.
 - Two or more IDs: do **Step 0** first.
 - `--fast`: ask for the fast lane (see **Lanes**). You still decide if the ticket qualifies.
+- `--merge-develop`: the final stage is a merge to `develop` (see **Before you start**).
+- `--in-review`: the final Linear status is In Review, not Done.
 
 Browser capture commands and dev-server traps live in
 [`references/browser-demo-runbook.md`](references/browser-demo-runbook.md). Read it before
@@ -27,11 +29,20 @@ Step 2 and Step 5.
    `develop` has cost a full rebase.
    - If the host only deploys on a PR merge (for example Vercel's free plan with Git
      integration), `land_mode` must be `pr`. A direct push to the base branch would look
-     shipped but never deploy.
-2. **Resolve the assignee** (next section) before touching Linear.
-3. **Check for an earlier run** (see **Resuming**). Never start a second worktree for a
+     shipped but never deploy. An explicit `--merge-develop` overrides this: note in
+     **Not checked** that the push may not deploy.
+2. **Apply the run flags.** They change this run only and never edit the config file.
+   - `--merge-develop`: use `develop` as `<base_branch>` and `merge` as `land_mode` for the
+     whole run, so the worktree, the rebase and the final merge all use it. Run
+     `git ls-remote --exit-code --heads origin develop` first. If that branch is missing,
+     stop and ask. This flag is the user's explicit choice, not a guess.
+   - `--in-review`: the ticket ends at **In Review** instead of **Done**. `pr` mode
+     already ends there, so the flag only changes `merge` mode.
+   - Say the target branch and final status in one line before Step 1.
+3. **Resolve the assignee** (next section) before touching Linear.
+4. **Check for an earlier run** (see **Resuming**). Never start a second worktree for a
    ticket that already has one.
-4. **Pick a lane** and say which one in one line.
+5. **Pick a lane** and say which one in one line.
 
 <!-- assignee:start -->
 ## Assignee: who the ticket goes to
@@ -87,9 +98,10 @@ human gates and pushes a shared branch.
    overlap to the parent. Subagents never message each other.
 3. **Spawn one subagent per independent ticket** with the `Agent` tool and no
    `isolation: "worktree"`. The loop makes its own worktree, and a harness worktree would
-   put a second checkout inside it. Spawn it with this text:
+   put a second checkout inside it. Spawn it with this text, where `<flags>` repeats any
+   `--merge-develop` or `--in-review` from this run:
 
-   > Run `/ship-loop-web <ID>` with three overrides. (1) You are a delegated subagent:
+   > Run `/ship-loop-web <ID> <flags>` with three overrides. (1) You are a delegated subagent:
    > never call `AskUserQuestion`. (2) At each STOP gate, stop and return a report: the
    > gate, what the approver needs to see, and the artifact paths. Do not decide the
    > gate yourself. (3) Your run ends once the Step 5 demo is produced and reported. Do
@@ -171,6 +183,26 @@ Skip this step if the ticket has no UI change.
 2. Run `/plan-design-review`. Skip it only if the ticket has no UI change.
 3. Every ticket gets at least one of the two. Fold their feedback into the plan before
    writing code.
+4. **Write the acceptance tests with a subagent, after `/plan-eng-review` and before any
+   implementation.** Skip this item only if `/plan-eng-review` was skipped. Spawn one
+   subagent with the `Agent` tool and no `isolation: "worktree"`, and pass it the reviewed
+   plan with this text:
+
+   > In the worktree at <absolute path>, write the test cases that the code for <ID> must
+   > pass. Use the ticket's acceptance criteria, the reviewed plan below, and the test
+   > setup the repo already has. Cover each criterion, plus the edge and failure cases the
+   > plan names. Test behavior, not internals. Write tests only: no implementation code.
+   > Run them and report which fail and why. List every criterion a test cannot check.
+   > Commit only the tests: `git commit -m "test: acceptance tests for <ID>"`.
+
+   - **Check the result.** Each new test must fail because the behavior is missing, not
+     because of a typo or broken setup. A test that already passes proves nothing: fix it
+     or drop it.
+   - **Criteria no test can check** (visual, device-only) go on the Step 5 demo list.
+   - **No test runner in the repo:** do not add one on your own. Call `AskUserQuestion`
+     to add one or skip this item.
+   - **No `Agent` tool in this run:** write the tests yourself now, before any
+     implementation, and say so in the final report.
 
 ## Step 4: Implement
 
@@ -179,13 +211,18 @@ Skip this step if the ticket has no UI change.
    options. It must not cut validation, error handling, security checks, accessibility
    or tests. A diff smaller than the plan is fine. A diff that drops an acceptance
    criterion is not.
-2. **New non-trivial logic gets a test** (a branch, a parser, a bug fix, money, auth, data
+2. **Run `/ponytail-review` on the diff before any tests or demo.** Fix its Must-fix
+   findings. A missing-test finding is handled by the next item. Note what it removed.
+3. **New non-trivial logic gets a test** (a branch, a parser, a bug fix, money, auth, data
    writes, an API handler). One test that fails when the logic breaks. A bug fix gets a
-   test that fails before the fix.
-3. **Run every command in `checks`** (for example `npm run typecheck`, `npm test`,
+   test that fails before the fix. The Step 3 acceptance tests count: add only what
+   they miss.
+4. **Run every command in `checks`** (for example `npm run typecheck`, `npm test`,
    `npm run build`) from the worktree. Write down pass counts. If a check fails, run it on
    a clean `origin/<base_branch>` worktree too, so you report only the failures you added.
-4. Run `/ponytail-review` on the diff. Fix its Must-fix findings. Note what it removed.
+   - **Every acceptance test from Step 3 must pass.** Never weaken, skip or delete one to
+     get there. If a test contradicts the ticket, stop and ask, then record the change in
+     the final report.
 
 ## Step 5: Demo and QA
 
@@ -252,7 +289,8 @@ Start only after the Step 5 demo is approved.
      `checks`, and push `<base_branch>`. If local `<base_branch>` had commits that are
      not on the remote, list them and get approval before pushing, because the push
      would publish them. Confirm `git rev-parse HEAD` equals
-     `git rev-parse origin/<base_branch>`, then move the ticket to **Done**.
+     `git rev-parse origin/<base_branch>`, then move the ticket to **Done**. With
+     `--in-review`, move it to **In Review** and put the merge commit in a ticket comment.
 6. **Unverifiable criteria go to In Review, not Done.** If an acceptance criterion could
    not be checked in this session (production-only data, a third-party webhook, email
    delivery), keep the ticket at In Review and list what is left in a ticket comment.
@@ -279,11 +317,15 @@ work out the step from the evidence and continue from the first step without it:
 | Evidence | Resume at |
 | --- | --- |
 | Worktree only, no commits | Step 2 (or Step 4 in the fast lane) |
-| Commits, no demo attached | Step 4.3 (re-run `checks`), then Step 5 |
+| Only the acceptance-test commit | Step 4 |
+| Commits, no demo attached | Step 4.4 (re-run `checks`), then Step 5 |
 | Demo attached, not approved | Step 5.8 |
 | PR open, or branch landed | Step 6.5's Linear write, then Step 7 |
 
 Never assume a gate was approved because its artifact exists. Ask again.
+
+Run flags are not stored: a resumed run uses the flags given this time. If the branch
+was not cut from this run's `<base_branch>`, ask before you continue.
 
 ## Final report
 
@@ -295,6 +337,7 @@ Result:    PR open <url> | landed on main | stopped at <gate> | failed at <step>
 Lane:      full | fast
 Branch:    eng-12-pricing-toggle (worktree: <path or "removed">)
 Checks:    typecheck ok, tests 212/212 ok, build ok (on rebased branch)
+Acceptance: 6/6 pass, written before the code, 0 changed | skipped: <reason>
 Security:  cso: no findings (5 files in scope); security-review: no findings (5 files)
 Demo:      <attachment or path>
 Linear:    assignee <name>, status <status>

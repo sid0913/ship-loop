@@ -14,7 +14,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Claude%20Code-skills-111111?style=flat-square" alt="Claude Code skills">
   <img src="https://img.shields.io/badge/iOS%20%7C%20web-2%20loops-111111?style=flat-square" alt="iOS and web">
-  <img src="https://img.shields.io/badge/tests-47%20passing-111111?style=flat-square" alt="47 tests passing">
+  <img src="https://img.shields.io/badge/tests-65%20passing-111111?style=flat-square" alt="65 tests passing">
   <img src="https://img.shields.io/badge/license-MIT-111111?style=flat-square" alt="MIT license">
 </p>
 
@@ -42,15 +42,15 @@ landed. They stop for a human only where a human decision matters:
 
 ```
 /ship-loop-ios ENG-12        # iOS, React Native or Expo app
-/ship-loop-web ENG-12 ENG-14 # web app, two tickets in parallel
+/ship-loop-web ENG-12 ENG-14 # web app, two tickets in parallel (one subagent per ticket)
 ```
 
 | Step | What happens | Stops for you? |
 | --- | --- | --- |
 | 1 | New worktree off your base branch, related-ticket check, assign + In Progress | if a related ticket is unfinished |
 | 2 | Design demo (web: responsive HTML + dark toggle; iOS: simulator captures) | approve the design |
-| 3 | `/plan-eng-review` + `/plan-design-review` | — |
-| 4 | Implement with `ponytail`, tests for new logic, project checks, `/ponytail-review` | — |
+| 3 | `/plan-eng-review` + `/plan-design-review`, then a subagent writes the acceptance tests the code must pass | — |
+| 4 | Implement with `ponytail`, `/ponytail-review`, tests for new logic, project checks | — |
 | 5 | MP4 demo of every changed state, light + dark, attached to the ticket | approve the demo |
 | 6 | `/cso` + `security-review` with a non-empty-diff check, rebase, PR or merge, Linear status | only on findings or a risky conflict |
 | 7 | Remove the worktree | yes/no |
@@ -136,6 +136,21 @@ Small tickets with no UI and no risky surface (auth, payments, data writes, migr
 native config) can use the **fast lane**: no design step, no plan reviews, and a lighter
 demo. Steps 1, 4, 6 and 7 and every gate still run. Add `--fast` to ask for it; the skill
 still decides whether the ticket qualifies.
+
+## Run flags
+
+Add these to any run. They override `.claude/ship-loop.json` for that run only.
+
+```
+/ship-loop-web ENG-12 --merge-develop              # cut from develop, merge to develop, Done
+/ship-loop-web ENG-12 --in-review                  # merge to the base branch, In Review
+/ship-loop-web ENG-12 --merge-develop --in-review  # merge to develop, In Review
+```
+
+| Flag | Effect |
+| --- | --- |
+| `--merge-develop` | Uses `develop` as the base branch and merges to it. The run stops if `origin/develop` does not exist. |
+| `--in-review` | The ticket ends at In Review instead of Done. `pr` mode already ends there. |
 
 ## Layout
 
