@@ -1,6 +1,6 @@
 ---
 name: ship-loop-web
-description: Take one or more Linear tickets from "ready" to landed for a web app: worktree, responsive design demo, plan reviews, ponytail implementation, tests, browser demo video, security gate, PR or merge, cleanup. Multiple IDs fan out to one subagent per ticket. Invoke explicitly with /ship-loop-web <LINEAR-ID> [<LINEAR-ID>...] [--fast].
+description: Take one or more Linear tickets from "ready" to landed for a web app: worktree, responsive design demo with impeccable, plan reviews, ponytail implementation, tests, browser demo video, security gate, PR or merge, cleanup. Multiple IDs fan out to one subagent per ticket. Invoke explicitly with /ship-loop-web <LINEAR-ID> [<LINEAR-ID>...] [--fast].
 ---
 
 # /ship-loop-web: Linear ticket to landed, end to end (web)
@@ -70,6 +70,12 @@ Both have the same shape: `{"linear_assignee": "<Linear display name or email>"}
 
 If you are not sure, use full. If a fast-lane ticket grows past the limits during Step 4,
 switch to full, say so, and go back to Step 3.
+
+**impeccable is required for UI work** (Step 2 and Step 4). If `/impeccable` is not
+installed, stop and tell the user to run the install command in the ship-loop
+`INSTALL.md`. Do not install it, and do not turn on its hooks (`/impeccable hooks on`)
+during a run: hooks change every later session. The detector downloads a checksummed
+engine from GitHub releases on first use.
 
 ## Step 0: Several tickets at once (2+ IDs only)
 
@@ -154,9 +160,10 @@ Skip this step if the ticket has no UI change.
    - **Mobile, tablet and desktop** views of the change, in one demo.
    - **A working light/dark toggle** that switches the real dark-mode class, so the
      reviewer can flip both themes. Do not bake in whichever theme was active.
-3. Optional design tools, if installed: `/impeccable shape` then `critique`/`polish` to
-   design it, then `/hallmark audit <path>` to review it. Do not install their hooks
-   during a run. Say in the gate report what each tool found and what you changed.
+3. **Design it with `impeccable`.** Run `/impeccable shape` for a new surface, then
+   `/impeccable critique` and `/impeccable polish` on the demo. It reads `PRODUCT.md` and
+   `DESIGN.md` if they exist. Optional: `/hallmark audit <path>` on the demo. Say in the
+   gate report what each tool found and what you changed.
 4. **Meet a real quality bar, not just "it renders."** Dark surfaces use elevation, not
    just inverted lightness. Dark-mode text is off-white, not pure white. Accents stay
    within the dark-mode tokens. Each breakpoint looks deliberately designed. Make at most
@@ -186,6 +193,11 @@ Skip this step if the ticket has no UI change.
    `npm run build`) from the worktree. Write down pass counts. If a check fails, run it on
    a clean `origin/<base_branch>` worktree too, so you report only the failures you added.
 4. Run `/ponytail-review` on the diff. Fix its Must-fix findings. Note what it removed.
+5. **UI changes: run the impeccable detector** on the changed UI files
+   (`npx impeccable detect <file>...`) and on each changed page from the dev server
+   (`npx impeccable detect http://localhost:<port>/<path>`). The URL scan adds the
+   rendered-page rules, such as low contrast and tiny text. Fix each finding, or say in
+   the Step 5 report why you keep it. Skip this item if the ticket has no UI change.
 
 ## Step 5: Demo and QA
 

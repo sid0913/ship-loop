@@ -46,6 +46,9 @@ for f in "${skills[@]}"; do
   t "$d: no hardcoded Linear MCP prefix" bash -c "! grep -q 'mcp__claude_ai_Linear__' '$f'"
   t "$d: no stale develop default" bash -c "! grep -qE 'merged into \`?develop|off \`?develop' '$f'"
   t "$d: uses ponytail in Step 4" bash -c "awk '/^## Step 4/{f=1} /^## Step 5/{f=0} f' '$f' | grep -q ponytail"
+  t "$d: Step 2 designs with impeccable" bash -c "awk '/^## Step 2/{f=1} /^## Step 3/{f=0} f' '$f' | grep -q '/impeccable shape'"
+  t "$d: Step 4 runs the impeccable detector" bash -c "awk '/^## Step 4/{f=1} /^## Step 5/{f=0} f' '$f' | grep -q 'npx impeccable detect'"
+  t "$d: impeccable is not optional" bash -c "! grep -qiE 'optional[^.]*impeccable' '$f'"
   t "$d: Step 4 requires tests" bash -c "awk '/^## Step 4/{f=1} /^## Step 5/{f=0} f' '$f' | grep -qi 'gets a test'"
   t "$d: security gate checks diff scope" grep -q 'git diff --stat origin/<base_branch>...HEAD' "$f"
   t "$d: final report has Not checked" grep -q '^Not checked:' "$f"
@@ -78,6 +81,7 @@ assert c["land_mode"] in ("pr","merge")'
 tmp="$(mktemp -d)"; trap 'rm -rf "$tmp"' EXIT
 export HOME="$tmp/home" XDG_CONFIG_HOME="$tmp/home/.config"; mkdir -p "$HOME"
 t "scripts parse" bash -n install.sh bin/ship-loop-assignee
+t "install --check: impeccable is required" bash -c "./install.sh --check | grep -q 'MISSING  impeccable skill'"
 t "assignee: --show fails when unset" bash -c "! bin/ship-loop-assignee --show '$tmp' >/dev/null"
 bin/ship-loop-assignee 'Ada "Al" Lovelace' >/dev/null
 t "assignee: global write, quotes survive" bash -c "[ \"\$(bin/ship-loop-assignee --show '$tmp' | sed 's/  (from.*//')\" = 'Ada \"Al\" Lovelace' ]"

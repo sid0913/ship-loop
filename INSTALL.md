@@ -15,6 +15,7 @@ missing. Everything below is for macOS with [Homebrew](https://brew.sh).
 | Linear MCP | Reads tickets, assigns, sets status, attaches demos | see [Linear](#linear) |
 | gstack | `/plan-eng-review`, `/plan-design-review`, `/cso`, `/design-html`, `/browse` | see [gstack](#gstack) |
 | ponytail | `ponytail` (Step 4) and `/ponytail-review` | see [ponytail](#ponytail) |
+| impeccable | Design new UI (Step 2) and scan changed UI (Step 4) | see [impeccable](#impeccable) |
 
 `security-review` is built into Claude Code and needs no install.
 
@@ -46,6 +47,23 @@ In Claude Code, send these as two separate prompts:
 The plugin's hooks need `node` on the PATH of a non-interactive shell. Other agents and
 details: <https://github.com/DietrichGebert/ponytail/blob/main/INSTALL.md>.
 
+### impeccable
+
+Install the skill for Claude Code at the user level, without hooks:
+
+```bash
+npx impeccable install --providers=claude --scope=global --no-hooks --yes
+```
+
+This writes `~/.claude/skills/impeccable`. Reload Claude Code afterward. Run
+`npx impeccable update` to update it. The Claude Code plugin works too: send
+`/plugin marketplace add pbakaus/impeccable`, then install Impeccable from `/plugin`.
+
+ship-loop installs no hooks. The impeccable design hook scans every UI file the agent
+edits, in every session. Add it later with `npx impeccable install` if you want it.
+`npx impeccable detect` downloads a checksummed engine into `~/.impeccable/bin/` on first
+use. Details: <https://impeccable.style/docs>.
+
 ### Linear
 
 Either connect Linear in claude.ai (Settings → Connectors), or add the MCP server to Claude
@@ -76,7 +94,6 @@ bin/ship-loop-assignee "Your Linear name"
 
 | Prereq | Used in | Install |
 | --- | --- | --- |
-| impeccable | Step 2: design and polish new UI | <https://github.com/pbakaus/impeccable> (follow its README) |
 | hallmark | Step 2: audit the design | <https://github.com/Nutlope/hallmark> (follow its README) |
 | Playwright | `/ship-loop-web` Step 5: real video instead of a screenshot slideshow | `npm i -D playwright && npx playwright install chromium` in the project |
 
