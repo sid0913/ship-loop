@@ -6,8 +6,10 @@
   and `INSTALL.md` gives the install command (skills only, no hooks).
 - Step 2 designs new UI with `/impeccable shape`, `critique` and `polish`. hallmark stays
   optional.
-- Step 4 runs `npx impeccable detect` on changed UI files. The web skill also scans each
-  changed page from the dev server.
+- Step 4 checks changed UI with impeccable. The web skill runs `npx impeccable detect` on
+  changed files and on each changed page from the dev server. The iOS skill runs
+  `/impeccable audit`, because the detector reads web markup only and reports React
+  Native source as clean.
 - A run stops if impeccable is missing. It never installs impeccable or turns on its hooks.
 - Tests cover the impeccable steps and the required check.
 

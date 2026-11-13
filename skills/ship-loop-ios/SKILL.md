@@ -197,10 +197,11 @@ mockup approved as if it were a native screen.
    on a clean `origin/<base_branch>` worktree too, so you report only the failures you
    added.
 5. Run `/ponytail-review` on the diff. Fix its Must-fix findings. Note what it removed.
-6. **UI changes: run the impeccable detector** on the changed UI files:
-   `npx impeccable detect <file>...`. Source files get the pattern rules only. Fix each
-   finding, or say in the Step 5 report why you keep it. Skip this item if the ticket has
-   no UI change.
+6. **UI changes: run `/impeccable audit <changed screen>`.** On iOS it loads impeccable's
+   native audit (HIG, Dynamic Type, touch targets, dark mode). Do not run
+   `npx impeccable detect` on React Native source: it reads web markup only, so an empty
+   result looks clean when nothing was checked. Fix each finding, or say in the Step 5
+   report why you keep it. Skip this item if the ticket has no UI change.
 
 ## Step 5: Demo and QA
 

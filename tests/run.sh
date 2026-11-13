@@ -47,7 +47,8 @@ for f in "${skills[@]}"; do
   t "$d: no stale develop default" bash -c "! grep -qE 'merged into \`?develop|off \`?develop' '$f'"
   t "$d: uses ponytail in Step 4" bash -c "awk '/^## Step 4/{f=1} /^## Step 5/{f=0} f' '$f' | grep -q ponytail"
   t "$d: Step 2 designs with impeccable" bash -c "awk '/^## Step 2/{f=1} /^## Step 3/{f=0} f' '$f' | grep -q '/impeccable shape'"
-  t "$d: Step 4 runs the impeccable detector" bash -c "awk '/^## Step 4/{f=1} /^## Step 5/{f=0} f' '$f' | grep -q 'npx impeccable detect'"
+  if [ "$d" = ship-loop-ios ]; then check='/impeccable audit'; else check='npx impeccable detect'; fi
+  t "$d: Step 4 runs the impeccable check ($check)" bash -c "awk '/^## Step 4/{f=1} /^## Step 5/{f=0} f' '$f' | grep -qF '$check'"
   t "$d: impeccable is not optional" bash -c "! grep -qiE 'optional[^.]*impeccable' '$f'"
   t "$d: Step 4 requires tests" bash -c "awk '/^## Step 4/{f=1} /^## Step 5/{f=0} f' '$f' | grep -qi 'gets a test'"
   t "$d: security gate checks diff scope" grep -q 'git diff --stat origin/<base_branch>...HEAD' "$f"

@@ -50,7 +50,7 @@ landed. They stop for a human only where a human decision matters:
 | 1 | New worktree off your base branch, related-ticket check, assign + In Progress | if a related ticket is unfinished |
 | 2 | Design demo with `impeccable` (web: responsive HTML + dark toggle; iOS: simulator captures) | approve the design |
 | 3 | `/plan-eng-review` + `/plan-design-review` | — |
-| 4 | Implement with `ponytail`, tests for new logic, project checks, `/ponytail-review`, `impeccable detect` on changed UI | — |
+| 4 | Implement with `ponytail`, tests for new logic, project checks, `/ponytail-review`, impeccable on changed UI (web: `detect`, iOS: native `audit`) | — |
 | 5 | MP4 demo of every changed state, light + dark, attached to the ticket | approve the demo |
 | 6 | `/cso` + `security-review` with a non-empty-diff check, rebase, PR or merge, Linear status | only on findings or a risky conflict |
 | 7 | Remove the worktree | yes/no |
@@ -75,7 +75,7 @@ It encodes rules learned from real runs that went wrong:
 - **Small diffs.** Implementation runs under [ponytail](https://github.com/DietrichGebert/ponytail),
   which writes the smallest complete change and never cuts tests, validation or security.
 - **No default-looking UI.** New UI is designed with [impeccable](https://impeccable.style),
-  and its detector scans every changed UI file before the demo.
+  and impeccable checks every changed screen before the demo.
 
 ## Install
 
@@ -160,7 +160,7 @@ tests/run.sh
 The tests check that steps and list items are numbered without gaps, that both skills
 share an identical assignee section, and that no skill assigns to `me`, contains a
 personal email, or hardcodes a Linear MCP prefix. They also check that Step 2 designs with
-impeccable, that Step 4 requires ponytail, tests and the impeccable detector, that the security gate checks the diff scope, that the final report
+impeccable, that Step 4 requires ponytail, tests and an impeccable check, that the security gate checks the diff scope, that the final report
 has **Not checked**, and that every link resolves. Finally, they run the installer and the
 assignee script against a throwaway `HOME`.
 
