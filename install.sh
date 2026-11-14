@@ -39,13 +39,13 @@ check() {
   have "bun (for gstack)" command -v bun "curl -fsSL https://bun.sh/install | bash"
   have "gstack skills" test -d "$skills_dir/gstack" "see INSTALL.md: gstack"
   have "ponytail skill" skill_installed ponytail "/plugin marketplace add DietrichGebert/ponytail, then /plugin install ponytail@ponytail"
+  have "impeccable skill" skill_installed impeccable "npx impeccable install --providers=claude --scope=global --no-hooks --yes"
   if [ "$variant" = ios ] || [ "$variant" = all ]; then
     have "xcodebuild (Xcode)" xcodebuild -version "install Xcode from the App Store, then: sudo xcode-select -s /Applications/Xcode.app"
     have "iOS Simulator" xcrun simctl help "Xcode > Settings > Components: add an iOS simulator runtime"
     have "maestro" test -x "$HOME/.maestro/bin/maestro" "curl -fsSL https://get.maestro.mobile.dev | bash"
     have "openjdk (for maestro)" test -x /opt/homebrew/opt/openjdk/bin/java "brew install openjdk"
   fi
-  optional "impeccable skill" skill_installed impeccable "see INSTALL.md: impeccable"
   optional "hallmark skill" skill_installed hallmark "see INSTALL.md: hallmark"
   if [ "$variant" = web ] || [ "$variant" = all ]; then
     optional "playwright (real web recordings)" npx --no-install playwright --version "npm i -D playwright && npx playwright install chromium"

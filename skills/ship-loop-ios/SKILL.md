@@ -1,6 +1,6 @@
 ---
 name: ship-loop-ios
-description: Take one or more Linear tickets from "ready" to landed for an iOS / React Native / Expo app: worktree, plan reviews, ponytail implementation, tests, simulator demo video, security gate, land, cleanup. Multiple IDs fan out to one subagent per ticket. Invoke explicitly with /ship-loop-ios <LINEAR-ID> [<LINEAR-ID>...] [--fast].
+description: Take one or more Linear tickets from "ready" to landed for an iOS / React Native / Expo app: worktree, plan reviews, impeccable design, ponytail implementation, tests, simulator demo video, security gate, land, cleanup. Multiple IDs fan out to one subagent per ticket. Invoke explicitly with /ship-loop-ios <LINEAR-ID> [<LINEAR-ID>...] [--fast].
 ---
 
 # /ship-loop-ios: Linear ticket to landed, end to end (iOS)
@@ -67,6 +67,12 @@ Both have the same shape: `{"linear_assignee": "<Linear display name or email>"}
 
 If you are not sure, use full. If a fast-lane ticket grows past the limits during Step 4,
 switch to full, say so, and go back to Step 3.
+
+**impeccable is required for UI work** (Step 2 and Step 4). If `/impeccable` is not
+installed, stop and tell the user to run the install command in the ship-loop
+`INSTALL.md`. Do not install it, and do not turn on its hooks (`/impeccable hooks on`)
+during a run: hooks change every later session. The detector downloads a checksummed
+engine from GitHub releases on first use.
 
 ## Step 0: Several tickets at once (2+ IDs only)
 
@@ -155,11 +161,12 @@ mockup approved as if it were a native screen.
 2. **Genuinely new UI:** read `UX-research.md` and `DESIGN.md` if they exist. Build the
    screen in the worktree from the app's theme tokens and UI primitives. Capture it in the
    simulator on every device in `ios.devices`, in light and dark mode.
-3. Optional design tools, if installed: `/impeccable shape` then `critique`/`polish` to
-   design it, then `/hallmark audit <path>` to review it. Both make web HTML/CSS, so use
-   them on an HTML mock only and build the real screen from the app's tokens. Do not
-   install their hooks during a run. Say in the gate report what each tool found and what
-   you changed.
+3. **Design it with `impeccable`.** Run `/impeccable shape` for a new surface, then
+   `/impeccable critique` and `/impeccable polish` on the result. Name the app's theme
+   tokens and UI primitives as the design system. impeccable makes web HTML/CSS, so use
+   its output as the design reference and build the real screen from the app's tokens. Do
+   not port its CSS into React Native. Optional: `/hallmark audit <path>` on the HTML mock.
+   Say in the gate report what each tool found and what you changed.
 4. Attach the captures to the ticket (`create_attachment`).
 5. **STOP.** Call `AskUserQuestion` for explicit design approval before writing more
    code. If you took path 1, state that and why, and continue.
@@ -190,6 +197,11 @@ mockup approved as if it were a native screen.
    on a clean `origin/<base_branch>` worktree too, so you report only the failures you
    added.
 5. Run `/ponytail-review` on the diff. Fix its Must-fix findings. Note what it removed.
+6. **UI changes: run `/impeccable audit <changed screen>`.** On iOS it loads impeccable's
+   native audit (HIG, Dynamic Type, touch targets, dark mode). Do not run
+   `npx impeccable detect` on React Native source: it reads web markup only, so an empty
+   result looks clean when nothing was checked. Fix each finding, or say in the Step 5
+   report why you keep it. Skip this item if the ticket has no UI change.
 
 ## Step 5: Demo and QA
 
